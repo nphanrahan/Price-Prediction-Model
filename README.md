@@ -10,3 +10,18 @@ This entire project is directed at building the following:
 3. A user interface where a user can upload simple clean data, choose the dependent variable, create a dashboard with predictions incremented by some measure of time, and a visualization tracking the historical accuracy of the prediction.
 
 The first few weeks of effort will be spent on building, refining, and validating the first two points. Once complete, I plan to move to point three.
+
+
+Model Automation Instructions:
+
+I used cron to create the automation of the next day closing price. In terminal, run:
+ 
+  crontab -e
+
+When cron opens, input and save (requires saving the Predictions file as a .py. This is included in the repo):
+
+  nate@Nates-MacBook-Air ~ % chmod +x /Users/nate/Desktop/Prediction\ Dashboard/Price\ Prediction.py
+
+  
+
+  
