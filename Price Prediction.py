@@ -130,34 +130,50 @@ print(f"Predicted closing price for the next trading day: ${predicted_next_day_c
 # Function to append a csv with the prediction for the next trading day in the "prediction" Column
 # If the csv at the file location doesn't exist, the function create's a file at that location
 
-def save_prediction_to_csv(prediction, date, file_path):
+def save_prediction_to_csv(prediction):
+
+    file_path = "/Users/nate/Desktop/Prediction Dashboard/INTEL_Predictions.csv"
+    
+    # Finding tomorrow's date
+    tomorrow = date.today() + timedelta(days=1)
+    
+    # If the CSV file exists, read it. Otherwise, initialize a new DataFrame.
     if os.path.exists(file_path):
         df = pd.read_csv(file_path, index_col='Date')
     else:
         df = pd.DataFrame(columns=['Prediction', 'Actual Close'])
+    
+    # Save the prediction for tomorrow's date
+    df.loc[tomorrow.strftime('%Y-%m-%d')] = [prediction, None]
+    
+    # Append the CSV file
+    df.to_csv(file_path)
 
-    df.loc[date] = [prediction, None]
+def update_actual_close(ticker):
 
-    df.to_csv('/Users/nate/Desktop/Prediction Dashboard/INTEL_Predictions.csv')
-
-
-# In[ ]:
-
-
-def update_actual_close(ticker, date, 'INTEL_Predictions.csv'):
-    data = yf.download(ticker, start=date, end=date)
-
+    file_path = "/Users/nate/Desktop/Prediction Dashboard/INTEL_Predictions.csv"
+    
+    # Get today's date
+    today = date.today().strftime('%Y-%m-%d')
+    
+    # Fetch today's data from Yahoo Finance
+    data = yf.download(ticker, start=today, end=today)
+    
+    # If data for today is available
     if not data.empty:
         actual_close = data['Close'].values[0]
-
+        
+        # Read the existing CSV
         df = pd.read_csv(file_path, index_col='Date')
-        df.at[date, 'Actual Close'] = actual_close
-        df.to_csv(file_path)
+        
+        # Update the 'Actual Close' column for today's date
+        if today in df.index:
+            df.at[today, 'Actual Close'] = actual_close
+            
+            # Write back to the CSV file
+            df.to_csv(file_path)
 
-
-# In[21]:
-
-
-save_prediction_to_csv(predicted_next_day_close[0], '2023-10-14', '/Users/nate/Desktop/Prediction Dashboard/INTEL_Predictions.csv')
-update_actual_close('INTC', '2023-10-14', '/Users/nate/Desktop/Prediction Dashboard/INTEL_Predictions.csv')
-
+# Update prediction for tomorrow's close
+save_prediction_to_csv(predicted_next_day_close[0])
+# Update today's close price
+update_actual_close('INTC')
