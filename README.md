@@ -12,7 +12,7 @@ This entire project is directed at building the following:
 The first few weeks of effort will be spent on building, refining, and validating the first two points. Once complete, I plan to move to point three.
 
 
-Model Automation Instructions:
+# Automation Instructions:
 
 I used cron to create the automation of the next day closing price. In terminal, run:
  
