@@ -9,7 +9,7 @@
 import os
 import yfinance as yf
 import pandas as pd
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
@@ -150,19 +150,21 @@ def save_prediction_to_csv(prediction):
     # Append the CSV file
     df.to_csv(file_path)
 
-def update_actual_close(ticker):
-
+def update_actual_close(ticker, days_back=7):
     file_path = "/Users/nate/Desktop/Prediction Dashboard/INTEL_Predictions.csv"
     
     # Get today's date
     today = date.today().strftime('%Y-%m-%d')
     
-    # Fetch today's data from Yahoo Finance
-    data = yf.download(ticker, start=today, end=today)
+    # Fetch the past `days_back` days of data from Yahoo Finance
+    end_date = date.today()
+    start_date = end_date - timedelta(days=days_back)
+    
+    data = yf.download(ticker, start=start_date, end=end_date)
     
     # If data for today is available
-    if not data.empty:
-        actual_close = data['Close'].values[0]
+    if today in data.index:
+        actual_close = data.loc[today, 'Close']
         
         # Read the existing CSV
         df = pd.read_csv(file_path, index_col='Date')
